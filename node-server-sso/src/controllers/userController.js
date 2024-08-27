@@ -1,5 +1,6 @@
 // Author: TrungQuanDev | https://youtube.com/@trungquandev
 import { StatusCodes } from 'http-status-codes'
+import bcrypt from 'bcrypt'
 const Datastore = require('nedb-promises')
 const db = Datastore.create('src/database/db.json')
 
@@ -13,7 +14,7 @@ const hookLogin = async (req, res) => {
     const newUser = req.body
     // console.log('newUser: ', newUser)
 
-    const existingUser = await db.findOne({ user_id: newUser.user_id })
+    const existingUser = await db.findOne({ email: newUser.email })
     // console.log('existingUser: ', existingUser)
 
     // Tồn tại user thì tùy spec dự án để xử lý
@@ -47,6 +48,23 @@ const getAll = async (req, res) => {
   }
 }
 
+const login = async (req, res) => {
+  try {
+    const { email, password } = req.body
+    const user = await db.findOne({ email: email })
+
+    bcrypt.compare(password, user.password, (err, result) => {
+      if (err || !result) {
+        res.status(StatusCodes.UNAUTHORIZED).json({ message: 'Unauthorized' })
+        return
+      }
+      return res.status(StatusCodes.OK).json({ message: 'Login successfully' })
+    })
+  } catch (error) {
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(error)
+  }
+}
+
 const getByEmail = async (req, res) => {
   try {
     // Lấy user theo email
@@ -73,5 +91,6 @@ export const userController = {
   hookLogin,
   getAll,
   getByEmail,
+  login,
   deleteByEmail
 }

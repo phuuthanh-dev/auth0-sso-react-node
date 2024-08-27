@@ -21,6 +21,10 @@ Router.route('/private/get_by_email/:email')
 Router.route('/public/get_all')
   .get(userController.getAll)
 
+// Public: API get toàn bộ user (Không cần xác thực accessToken)
+Router.route('/public/login')
+  .post(userController.login)
+
 // Public: API xóa một user theo email (dùng để test xóa user cho nhanh)
 Router.route('/public/delete/:email')
   .delete(userController.deleteByEmail)
