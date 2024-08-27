@@ -58,7 +58,11 @@ const login = async (req, res) => {
         res.status(StatusCodes.UNAUTHORIZED).json({ message: 'Unauthorized' })
         return
       }
-      return res.status(StatusCodes.OK).json({ message: 'Login successfully' })
+      return res.status(StatusCodes.OK).json({ message: 'Login successfully', profileData: {
+        email: user?.email,
+        name: user?.name,
+        avatar: user?.avatar
+      } })
     })
   } catch (error) {
     res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(error)
